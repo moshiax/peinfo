@@ -4,18 +4,18 @@
 #include <stdint.h>
 
 // convert relative virtual address to virtual address
-static LPVOID rva_to_va(PIMAGE_NT_HEADERS nt_headers, LPVOID base, DWORD rva) {
+static LPVOID rva_to_va(PIMAGE_NT_HEADERS nt_headers, LPVOID base, ULONG_PTR rva) {
     // this can also be done using the windows debug help library
     // see ImageRvaToVa
     // https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-imagervatova
 
     PIMAGE_SECTION_HEADER sect = IMAGE_FIRST_SECTION(nt_headers);
     for (int i = 0; i < nt_headers->FileHeader.NumberOfSections; ++i, ++sect) {
-        DWORD sect_start = sect->VirtualAddress;
-        DWORD sect_end = sect->VirtualAddress + sect->Misc.VirtualSize;
+        ULONG_PTR sect_start = (ULONG_PTR)sect->VirtualAddress;
+        ULONG_PTR sect_end = sect_start + (ULONG_PTR)sect->Misc.VirtualSize;
         if (sect_start <= rva && rva < sect_end) {
-            DWORD file_offset = rva - sect->VirtualAddress + sect->PointerToRawData;
-            return (LPVOID)((DWORD_PTR)base + file_offset);
+            ULONG_PTR file_offset = rva - sect_start + (ULONG_PTR)sect->PointerToRawData;
+            return (LPVOID)((ULONG_PTR)base + file_offset);
         }
     }
     return NULL;
