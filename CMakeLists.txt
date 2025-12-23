@@ -14,7 +14,6 @@ add_executable(peinfo
 set_target_properties(peinfo
     PROPERTIES
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-        OUTPUT_NAME "peinfo-${PROJECT_VERSION}"
 )
 target_compile_definitions(peinfo PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN)
 target_compile_options(peinfo PRIVATE /W4)
